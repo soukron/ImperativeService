@@ -9,9 +9,9 @@ from time import time,sleep
 
 
 embedding_service_host=os.getenv('EMBEDDING_SERVICE_HOST', '127.0.0.1')
-embedding_service_port=int(os.getenv('EMBEDDING_SERVICE_PORT', '999'))
+embedding_service_port=os.getenv('EMBEDDING_SERVICE_PORT', '999')
 nexus_service_host=os.getenv('NEXUS_SERVICE_HOST', '127.0.0.1')
-nexus_service_port=int(os.getenv('NEXUS_SERVICE_PORT', '8888'))
+nexus_service_port=os.getenv('NEXUS_SERVICE_PORT', '8888')
 
 
 def wait_for_service(service_name, service_port):
