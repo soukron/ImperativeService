@@ -8,6 +8,12 @@ import openai
 from time import time,sleep
 
 
+embedding_service_host=os.getenv('EMBEDDING_SERVICE_HOST', '127.0.0.1')
+embedding_service_port=int(os.getenv('EMBEDDING_SERVICE_PORT', '999'))
+nexus_service_host=os.getenv('NEXUS_SERVICE_HOST', '127.0.0.1')
+nexus_service_port=int(os.getenv('NEXUS_SERVICE_PORT', '8888'))
+
+
 def open_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as infile:
         return infile.read()
@@ -52,8 +58,17 @@ def gpt3_completion(prompt, engine='text-davinci-002', temp=0.7, top_p=1.0, toke
             sleep(1)
 
 
+def get_embedding(payload):  # payload is a list of strings
+    # payload example: ['bacon bacon bacon', 'ham ham ham']
+    # response example:  [{'string': 'bacon bacon bacon', 'vector': '[1, 1 ... ]'}, {'string': 'ham ham ham', 'vector': '[1, 1 ... ]'}]
+    # embedding is already rendered as a JSON-friendly string
+    url = 'http://127.0.0.1:999'  # currently the USEv5 service, about 0.02 seconds per transaction!
+    response = requests.request(method='POST', url=url, json=payload)
+    return response.json()
+
+
 def nexus_send(payload):  # REQUIRED: content
-    url = 'http://127.0.0.1:8888/add'
+    url = 'http://%s:%s/add' % (nexus_service_host, nexus_service_port)
     payload['content'] = content_prefix + payload['content']
     payload['microservice'] = 'heuristic_imperatives'
     payload['model'] = 'text-davinci-002'
@@ -63,25 +78,25 @@ def nexus_send(payload):  # REQUIRED: content
 
 
 def nexus_search(payload):
-    url = 'http://127.0.0.1:8888/search'
+    url = 'http://%s:%s/search' % (nexus_service_host, nexus_service_port)
     response = requests.request(method='POST', url=url, json=payload)
     return response.json()
 
 
 def nexus_bound(payload):
-    url = 'http://127.0.0.1:8888/bound'
+    url = 'http://%s:%s/bound' % (nexus_service_host, nexus_service_port)
     response = requests.request(method='POST', url=url, json=payload)
     return response.json()
 
 
 def nexus_match():
-    url = 'http://127.0.0.1:8888/match'
+    url = 'http://%s:%s/match'
     response = requests.request(method='POST', url=url)
     return response.json()
 
 
 def nexus_recent():
-    url = 'http://127.0.0.1:8888/recent'
+    url = 'http://%s:%s/recent'
     response = requests.request(method='POST', url=url)
     return response.json()
 
