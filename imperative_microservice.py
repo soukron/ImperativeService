@@ -33,7 +33,7 @@ def save_file(filepath, content):
         outfile.write(content)
 
 
-openai.api_key = open_file('openaiapikey.txt')
+openai.api_key = open_file('openaiapikey.txt').rstrip()
 service_name = 'heuristic_imperatives'
 content_prefix = 'Heuristic imperatives: '
 tempo = 30
