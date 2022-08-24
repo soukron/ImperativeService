@@ -14,6 +14,15 @@ nexus_service_host=os.getenv('NEXUS_SERVICE_HOST', '127.0.0.1')
 nexus_service_port=int(os.getenv('NEXUS_SERVICE_PORT', '8888'))
 
 
+def wait_for_service(service_name, service_port):
+    while True:
+        try:
+            return requests.get('http://' + service_name + ':' + service_port)
+        except requests.exceptions.ConnectionError:
+            print('Waiting for ' + service_name + ' to be reachable...')
+            sleep(10)
+
+
 def open_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as infile:
         return infile.read()
@@ -109,6 +118,9 @@ def save_and_send(content, prefix, tag):
 
 
 if __name__ == '__main__':
+    wait_for_service(embedding_service_host, embedding_service_port)
+    wait_for_service(nexus_service_host, nexus_service_port)
+
     while True:
         # get recent memories
         recent = nexus_recent({'seconds': tempo})
