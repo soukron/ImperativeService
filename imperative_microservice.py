@@ -104,10 +104,10 @@ def nexus_match():
     return response.json()
 
 
-def nexus_recent():
-    url = 'http://%s:%s/recent'
-    response = requests.request(method='POST', url=url)
-    return response.json()
+# this apparently requires a new endpoint in nexus which is not yet implemented
+def nexus_recent(data):
+    payload = {'lower_bound': time() - data['seconds'], 'upper_bound': time()}
+    return nexus_bound(payload)
 
 
 def save_and_send(content, prefix, tag):
